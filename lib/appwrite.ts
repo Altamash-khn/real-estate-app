@@ -1,4 +1,5 @@
 import * as Linking from "expo-linking";
+import { use } from "react";
 import { Account, Avatars, Client, OAuthProvider } from "react-native-appwrite";
 
 export const config = {
@@ -51,5 +52,33 @@ export async function login() {
   } catch (error) {
     console.log(error);
     return false;
+  }
+}
+
+export async function logout() {
+  try {
+    await account.deleteSession("current");
+    return true;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+}
+
+export async function getUser() {
+  try {
+    const user = await account.get();
+
+    if(user.$id) {
+      const userAvatar = avatar.getInitials(user.name);
+
+      return {
+        ...user,
+        avatar: userAvatar.toString(),
+      };
+    }
+  } catch (error) {
+    console.log(error);
+    return null;
   }
 }
