@@ -1,5 +1,5 @@
 import * as Linking from "expo-linking";
-import { use } from "react";
+import * as WebBrowser from "expo-web-browser";
 import { Account, Avatars, Client, OAuthProvider } from "react-native-appwrite";
 
 export const config = {
@@ -18,39 +18,41 @@ export const account = new Account(client);
 
 export async function login() {
   try {
-    const redirectUrl = Linking.createURL(path: "/");
+    const redirectUrl = Linking.createURL("/");
 
-    const response = await account.createOAuth2Token(
-       OAuthProvider.Google,
+    // ✅ Build OAuth URL manually
+    const authUrl = `${config.endpoint}/account/sessions/oauth2/${OAuthProvider.Google}?project=${config.projectId}&success=${encodeURIComponent(redirectUrl)}&failure=${encodeURIComponent(redirectUrl)}`;
+
+    // ✅ Open browser for Google login
+    const browserResult = await WebBrowser.openAuthSessionAsync(
+      authUrl,
       redirectUrl,
     );
 
-    if(!response) throw new Error(message: "Failed to create OAuth2 token");
-
-    const browserResult =  await openAuthSessionAsync(response.toString(), redirectUrl);
-
     if (browserResult.type !== "success") {
-      throw new Error(message: "Failed to login");
+      throw new Error("Login cancelled");
     }
 
+    // ✅ Get returned URL
     const url = new URL(browserResult.url);
 
-    const secrert = url.searchParams.get("secret")?.toString();
-    const userId = url.searchParams.get("userId")?.toString();
+    const secret = url.searchParams.get("secret");
+    const userId = url.searchParams.get("userId");
 
-    if (!secrert || !userId) {
-      throw new Error(message: "Failed to retrieve secret or userId from URL");
+    if (!secret || !userId) {
+      throw new Error("Missing secret or userId");
     }
 
-    const session = await account.createSession(userId, secrert);
+    // ✅ Create session
+    const session = await account.createSession(userId, secret);
 
     if (!session) {
-      throw new Error(message: "Failed to create session");
+      throw new Error("Failed to create session");
     }
 
     return true;
   } catch (error) {
-    console.log(error);
+    console.log("LOGIN ERROR:", error);
     return false;
   }
 }
@@ -69,7 +71,7 @@ export async function getUser() {
   try {
     const user = await account.get();
 
-    if(user.$id) {
+    if (user.$id) {
       const userAvatar = avatar.getInitials(user.name);
 
       return {
