@@ -11,8 +11,15 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import "../../../globals.css";
+import { useGlobalContext } from "@/lib/global-provider";
+import { Redirect } from "expo-router";
 
 export default function Index() {
+
+  const {refetch, loading, isLoggedIn} = useGlobalContext();
+
+  if(!loading && isLoggedIn) return <Redirect href="/home" />
+
   async function handleLogin() {
     const result = await login();
 
