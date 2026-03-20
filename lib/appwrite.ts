@@ -16,21 +16,19 @@ export const client = new Client()
 export const avatar = new Avatars(client);
 export const account = new Account(client);
 
-
-
 export async function login() {
   try {
     const redirectUri = Linking.createURL("/");
 
     const response = await account.createOAuth2Token(
       OAuthProvider.Google,
-      redirectUri
+      redirectUri,
     );
     if (!response) throw new Error("Create OAuth2 token failed");
 
-    const browserResult = await openAuthSessionAsync(
+    const browserResult = await WebBrowser.openAuthSessionAsync(
       response.toString(),
-      redirectUri
+      redirectUri,
     );
     if (browserResult.type !== "success")
       throw new Error("Create OAuth2 token failed");
