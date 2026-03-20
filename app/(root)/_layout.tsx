@@ -6,7 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function AppLayout() {
   const { loading, isLoggedIn } = useGlobalContext();
 
-  if (true) {
+  if (loading) {
     return (
       <SafeAreaView className="bg-white h-full justify-center items-center">
         <ActivityIndicator className="text-primary-300" size="large" />
@@ -14,9 +14,7 @@ export default function AppLayout() {
     );
   }
 
-
-
-  if(!isLoggedIn) return <Redirect href="/sign-in" />
+  if (!isLoggedIn) return <Redirect href="/sign-in" />;
 
   return <Slot />;
 }
