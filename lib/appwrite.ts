@@ -16,43 +16,36 @@ export const client = new Client()
 export const avatar = new Avatars(client);
 export const account = new Account(client);
 
+
+
 export async function login() {
   try {
-    const redirectUrl = Linking.createURL("/");
+    const redirectUri = Linking.createURL("/");
 
-    // ✅ Build OAuth URL manually
-    const authUrl = `${config.endpoint}/account/sessions/oauth2/${OAuthProvider.Google}?project=${config.projectId}&success=${encodeURIComponent(redirectUrl)}&failure=${encodeURIComponent(redirectUrl)}`;
-
-    // ✅ Open browser for Google login
-    const browserResult = await WebBrowser.openAuthSessionAsync(
-      authUrl,
-      redirectUrl,
+    const response = await account.createOAuth2Token(
+      OAuthProvider.Google,
+      redirectUri
     );
+    if (!response) throw new Error("Create OAuth2 token failed");
 
-    if (browserResult.type !== "success") {
-      throw new Error("Login cancelled");
-    }
+    const browserResult = await openAuthSessionAsync(
+      response.toString(),
+      redirectUri
+    );
+    if (browserResult.type !== "success")
+      throw new Error("Create OAuth2 token failed");
 
-    // ✅ Get returned URL
     const url = new URL(browserResult.url);
+    const secret = url.searchParams.get("secret")?.toString();
+    const userId = url.searchParams.get("userId")?.toString();
+    if (!secret || !userId) throw new Error("Create OAuth2 token failed");
 
-    const secret = url.searchParams.get("secret");
-    const userId = url.searchParams.get("userId");
-
-    if (!secret || !userId) {
-      throw new Error("Missing secret or userId");
-    }
-
-    // ✅ Create session
     const session = await account.createSession(userId, secret);
-
-    if (!session) {
-      throw new Error("Failed to create session");
-    }
+    if (!session) throw new Error("Failed to create session");
 
     return true;
   } catch (error) {
-    console.log("LOGIN ERROR:", error);
+    console.error(error);
     return false;
   }
 }
