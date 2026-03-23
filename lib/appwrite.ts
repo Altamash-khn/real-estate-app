@@ -1,5 +1,5 @@
 import * as Linking from "expo-linking";
-import * as WebBrowser from "expo-web-browser";
+import { openAuthSessionAsync } from "expo-web-browser";
 import { Account, Avatars, Client, OAuthProvider } from "react-native-appwrite";
 
 export const config = {
@@ -17,8 +17,6 @@ export const avatar = new Avatars(client);
 export const account = new Account(client);
 
 export async function login() {
-  console.log("login called");
-
   try {
     const redirectUri = Linking.createURL("/");
 
@@ -28,7 +26,7 @@ export async function login() {
     );
     if (!response) throw new Error("Create OAuth2 token failed");
 
-    const browserResult = await WebBrowser.openAuthSessionAsync(
+    const browserResult = await openAuthSessionAsync(
       response.toString(),
       redirectUri,
     );
@@ -50,27 +48,9 @@ export async function login() {
   }
 }
 
-// export async function logout() {
-//   try {
-//     await account.deleteSession("current");
-//     return true;
-//   } catch (error) {
-//     console.log(error);
-//     return false;
-//   }
-// }
-
 export async function logout() {
   try {
     await account.deleteSessions();
-    await WebBrowser.dismissBrowser(); //
-
-    console.log("Session delete called");
-
-    // 🔥 Check if still logged in
-    const user = await account.get();
-    console.log("Still logged in ❌", user);
-
     return true;
   } catch (error) {
     console.log("Logout error or success:", error);
