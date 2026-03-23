@@ -1,7 +1,7 @@
 import { settings } from "@/constants/data";
 import icons from "@/constants/icons";
-import images from "@/constants/images";
 import { logout } from "@/lib/appwrite";
+import { useGlobalContext } from "@/lib/global-provider";
 import React from "react";
 import {
   Alert,
@@ -49,10 +49,15 @@ const SettingsItem = ({
 };
 
 const Profile = () => {
+  const { user, refetch } = useGlobalContext();
+  const isValidUrl =
+    typeof user?.avatar === "string" && user.avatar.startsWith("http");
+
   const handleLogout = async () => {
     const result = await logout();
     if (result) {
       Alert.alert("You have been logged out successfully.");
+      refetch();
     } else {
       Alert.alert("Logout failed. Please try again.");
     }
@@ -72,7 +77,7 @@ const Profile = () => {
         <View className="flex flex-row justify-center mt-5">
           <View className="flex flex-col items-center relative mt-5">
             <Image
-              source={images.avatar}
+              source={isValidUrl ? { uri: user.avatar } : icons.placeholder}
               className="size-44 relative rounded-full"
             />
             <TouchableOpacity className="absolute bottom-11 right-2">
@@ -82,7 +87,7 @@ const Profile = () => {
               />
             </TouchableOpacity>
             <Text className="text-2xl mt-2 font-rubik ">
-              Ayan - the craftsman
+              {user?.name || "Username"}
             </Text>
           </View>
         </View>

@@ -22,6 +22,7 @@ import logout from "@/assets/icons/logout.png";
 import people from "@/assets/icons/people.png";
 import person from "@/assets/icons/person.png";
 import phone from "@/assets/icons/phone.png";
+import placeholder from "@/assets/icons/placeholder.png";
 import rightArrow from "@/assets/icons/right-arrow.png";
 import run from "@/assets/icons/run.png";
 import search from "@/assets/icons/search.png";
@@ -33,6 +34,7 @@ import wallet from "@/assets/icons/wallet.png";
 import wifi from "@/assets/icons/wifi.png";
 
 export default {
+  placeholder,
   google,
   home,
   search,

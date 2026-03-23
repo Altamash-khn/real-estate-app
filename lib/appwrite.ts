@@ -17,6 +17,8 @@ export const avatar = new Avatars(client);
 export const account = new Account(client);
 
 export async function login() {
+  console.log("login called");
+
   try {
     const redirectUri = Linking.createURL("/");
 
@@ -48,16 +50,33 @@ export async function login() {
   }
 }
 
+// export async function logout() {
+//   try {
+//     await account.deleteSession("current");
+//     return true;
+//   } catch (error) {
+//     console.log(error);
+//     return false;
+//   }
+// }
+
 export async function logout() {
   try {
-    await account.deleteSession("current");
+    await account.deleteSessions();
+    await WebBrowser.dismissBrowser(); //
+
+    console.log("Session delete called");
+
+    // 🔥 Check if still logged in
+    const user = await account.get();
+    console.log("Still logged in ❌", user);
+
     return true;
   } catch (error) {
-    console.log(error);
-    return false;
+    console.log("Logout error or success:", error);
+    return true;
   }
 }
-
 export async function getUser() {
   try {
     const user = await account.get();
