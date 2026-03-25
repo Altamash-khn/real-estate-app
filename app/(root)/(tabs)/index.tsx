@@ -1,4 +1,5 @@
 import { Card, FeaturedCard } from "@/components/Cards";
+import Filters from "@/components/Filters";
 import Search from "@/components/Search";
 import icons from "@/constants/icons";
 import images from "@/constants/images";
@@ -46,6 +47,8 @@ export default function Index() {
             <FeaturedCard />
           </View>
         </View>
+
+        <Filters />
 
         <View className="flex flex-row items-center justify-between">
           <Text className="text-xl font-rubik-bold text-black-300">
