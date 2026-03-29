@@ -2,7 +2,11 @@ import { Card, FeaturedCard } from "@/components/Cards";
 import Filters from "@/components/Filters";
 import Search from "@/components/Search";
 import icons from "@/constants/icons";
+import { getLatestProperties, getProperties } from "@/lib/appwrite";
 import { useGlobalContext } from "@/lib/global-provider";
+import { useAppwrite } from "@/lib/useAppwrite";
+import { router, useLocalSearchParams } from "expo-router";
+import { useEffect } from "react";
 import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import "../../../globals.css";
@@ -12,11 +16,43 @@ export default function Index() {
   const isValidUrl =
     typeof user?.avatar === "string" && user.avatar.startsWith("http");
 
+  const params = useLocalSearchParams<{ query?: string; filter?: string }>();
+  console.log("params", params);
+
+  const { data: latestProperties, loading: propertiesLoading } = useAppwrite({
+    fn: getLatestProperties,
+  });
+
+  const {
+    data: properties,
+    loading,
+    refetch,
+  } = useAppwrite({
+    fn: getProperties,
+    params: {
+      filter: params.filter!,
+      query: params.query!,
+      limit: 6,
+    },
+    skip: true,
+  });
+
+  const handleCardPress = (propertyId: string) => {
+    router.push(`/properties/${propertyId}`);
+  };
+
+  useEffect(() => {
+    refetch({
+      filter: params.filter!,
+      query: params.query!,
+      limit: 10,
+    });
+  }, [params.filter, params.query]);
+
   return (
     <SafeAreaView className="bg-white h-full">
       <FlatList
-        data={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
-        keyExtractor={(item) => item.toString()}
+        data={properties}
         numColumns={2}
         contentContainerClassName="pb-32"
         columnWrapperClassName="flex gap-5 px-5 border-b border-gray-200"
@@ -57,14 +93,18 @@ export default function Index() {
               </View>
 
               <FlatList
-                data={[1, 2, 3, 4, 5]}
-                keyExtractor={(item) => item.toString()}
+                data={latestProperties}
                 bounces={false}
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 contentContainerClassName="mt-5"
                 ItemSeparatorComponent={() => <View className="w-5" />}
-                renderItem={({ item }) => <FeaturedCard />}
+                renderItem={({ item }) => (
+                  <FeaturedCard
+                    onPress={() => handleCardPress(item.id)}
+                    item={item}
+                  />
+                )}
               />
             </View>
 
@@ -80,14 +120,11 @@ export default function Index() {
                 </Text>
               </TouchableOpacity>
             </View>
-
-            {/* <View className="flex flex-row gap-5 mt-5">
-              <Card />
-              <Card />
-            </View> */}
           </View>
         }
-        renderItem={({ item }) => <Card />}
+        renderItem={({ item }) => (
+          <Card onPress={() => handleCardPress(item.id)} item={item} />
+        )}
       />
     </SafeAreaView>
   );
