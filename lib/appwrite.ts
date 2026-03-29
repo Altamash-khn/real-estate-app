@@ -6,6 +6,7 @@ import {
   Client,
   Databases,
   OAuthProvider,
+  Query,
 } from "react-native-appwrite";
 
 export const config = {
@@ -29,6 +30,12 @@ export const client = new Client()
 export const avatar = new Avatars(client);
 export const account = new Account(client);
 export const databases = new Databases(client);
+
+interface GetPropertiesParams {
+  filter: string;
+  query: string;
+  limit?: number;
+}
 
 export async function login() {
   try {
@@ -86,5 +93,58 @@ export async function getUser() {
   } catch (error) {
     console.log(error);
     return null;
+  }
+}
+
+export async function getLatestProperties() {
+  try {
+    const results = await databases.listDocuments(
+      config.databaseId!,
+      config.propertiesCollectionId!,
+      [Query.orderDesc("$createdAt"), Query.limit(10)],
+    );
+    return results.documents;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
+
+export async function getProperties({
+  filter,
+  query,
+  limit,
+}: GetPropertiesParams) {
+  try {
+    const buildQuery = [Query.orderDesc("$createdAt")];
+
+    if (filter && filter !== "All") {
+      buildQuery.push(Query.equal("type", filter));
+    }
+
+    if (query) {
+      buildQuery.push(
+        Query.or([
+          Query.search("name", query),
+          Query.search("address", query),
+          Query.search("type", query),
+        ]),
+      );
+    }
+
+    if (limit) {
+      buildQuery.push(Query.limit(limit));
+    }
+
+    const results = await databases.listDocuments(
+      config.databaseId!,
+      config.propertiesCollectionId!,
+      buildQuery,
+    );
+
+    return results.documents;
+  } catch (error) {
+    console.error(error);
+    return [];
   }
 }
