@@ -1,5 +1,6 @@
 import { Card, FeaturedCard } from "@/components/Cards";
 import Filters from "@/components/Filters";
+import NoResults from "@/components/NoResults";
 import Search from "@/components/Search";
 import icons from "@/constants/icons";
 import { getLatestProperties, getProperties } from "@/lib/appwrite";
@@ -7,7 +8,14 @@ import { useGlobalContext } from "@/lib/global-provider";
 import { useAppwrite } from "@/lib/useAppwrite";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect } from "react";
-import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import "../../../globals.css";
 
@@ -70,6 +78,13 @@ export default function Index() {
         contentContainerClassName="pb-32"
         columnWrapperClassName="flex gap-5 px-5 border-b border-gray-200"
         showsVerticalScrollIndicator={false}
+        ListEmptyComponent={
+          loading ? (
+            <ActivityIndicator className="text-primary-300 mt-5" size="large" />
+          ) : (
+            <NoResults />
+          )
+        }
         ListHeaderComponent={
           <View className="px-5">
             <View className="flex flex-row items-center justify-between mt-5">
@@ -105,20 +120,29 @@ export default function Index() {
                 </TouchableOpacity>
               </View>
 
-              <FlatList
-                data={latestProperties}
-                bounces={false}
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerClassName="mt-5"
-                ItemSeparatorComponent={() => <View className="w-5" />}
-                renderItem={({ item }) => (
-                  <FeaturedCard
-                    onPress={() => handleCardPress(item.$id)}
-                    item={item}
-                  />
-                )}
-              />
+              {propertiesLoading ? (
+                <ActivityIndicator
+                  className="text-primary-300 mt-5"
+                  size="large"
+                />
+              ) : !latestProperties || latestProperties.length === 0 ? (
+                <NoResults />
+              ) : (
+                <FlatList
+                  data={latestProperties}
+                  bounces={false}
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerClassName="mt-5"
+                  ItemSeparatorComponent={() => <View className="w-5" />}
+                  renderItem={({ item }) => (
+                    <FeaturedCard
+                      onPress={() => handleCardPress(item.$id)}
+                      item={item}
+                    />
+                  )}
+                />
+              )}
             </View>
 
             <Filters />

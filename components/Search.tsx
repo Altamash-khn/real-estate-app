@@ -1,6 +1,7 @@
 import icons from "@/constants/icons";
-import { useLocalSearchParams, usePathname } from "expo-router";
-import React, { useState } from "react";
+import useDebounce from "@/lib/useDebounce";
+import { router, useLocalSearchParams, usePathname } from "expo-router";
+import React, { useEffect, useState } from "react";
 import { Image, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -9,10 +10,18 @@ const Search = () => {
   const params = useLocalSearchParams<{ query?: string }>();
   const [search, setSearch] = useState(params.query || "");
 
+  const debouncedSearch = useDebounce({
+    value: search,
+    delay: 500,
+  });
+
+  useEffect(() => {
+    router.setParams({ query: debouncedSearch });
+  }, [debouncedSearch]);
+
   function handleSearch(text: string) {
     setSearch(text);
   }
-
   return (
     <SafeAreaView>
       <View className="flex flex-row items-center justify-between w-full px-4 rounded-lg bg-accent-100 border border-primary-100 mt-5 py-2">
