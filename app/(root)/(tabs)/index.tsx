@@ -11,6 +11,16 @@ import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import "../../../globals.css";
 
+export interface Property {
+  $id: string;
+  name: string;
+  address: string;
+  price: number;
+  image: string;
+  rating: number;
+  type: string;
+}
+
 export default function Index() {
   const { user } = useGlobalContext();
   const isValidUrl =
@@ -19,7 +29,10 @@ export default function Index() {
   const params = useLocalSearchParams<{ query?: string; filter?: string }>();
   console.log("params", params);
 
-  const { data: latestProperties, loading: propertiesLoading } = useAppwrite({
+  const { data: latestProperties, loading: propertiesLoading } = useAppwrite<
+    Property[],
+    any
+  >({
     fn: getLatestProperties,
   });
 
@@ -27,7 +40,7 @@ export default function Index() {
     data: properties,
     loading,
     refetch,
-  } = useAppwrite({
+  } = useAppwrite<Property[], any>({
     fn: getProperties,
     params: {
       filter: params.filter!,
@@ -101,7 +114,7 @@ export default function Index() {
                 ItemSeparatorComponent={() => <View className="w-5" />}
                 renderItem={({ item }) => (
                   <FeaturedCard
-                    onPress={() => handleCardPress(item.id)}
+                    onPress={() => handleCardPress(item.$id)}
                     item={item}
                   />
                 )}
@@ -123,7 +136,7 @@ export default function Index() {
           </View>
         }
         renderItem={({ item }) => (
-          <Card onPress={() => handleCardPress(item.id)} item={item} />
+          <Card onPress={() => handleCardPress(item.$id)} item={item} />
         )}
       />
     </SafeAreaView>

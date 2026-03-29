@@ -1,3 +1,4 @@
+import { Property } from "@/app/(root)/(tabs)";
 import * as Linking from "expo-linking";
 import { openAuthSessionAsync } from "expo-web-browser";
 import {
@@ -103,7 +104,7 @@ export async function getLatestProperties() {
       config.propertiesCollectionId!,
       [Query.orderDesc("$createdAt"), Query.limit(10)],
     );
-    return results.documents;
+    return results.documents as unknown as Property[];
   } catch (error) {
     console.error(error);
     return [];
@@ -142,7 +143,7 @@ export async function getProperties({
       buildQuery,
     );
 
-    return results.documents;
+    return results.documents as unknown as Property[];
   } catch (error) {
     console.error(error);
     return [];

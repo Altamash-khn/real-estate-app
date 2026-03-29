@@ -1,3 +1,4 @@
+import { Property } from "@/app/(root)/(tabs)";
 import icons from "@/constants/icons";
 import images from "@/constants/images";
 import React from "react";
@@ -5,13 +6,7 @@ import { Image, Text, TouchableOpacity, View } from "react-native";
 
 interface CardsProps {
   onPress?: () => void;
-  item: {
-    image: string;
-    rating: number;
-    name: string;
-    address: string;
-    price: number;
-  };
+  item: Property;
 }
 
 export const FeaturedCard = ({
