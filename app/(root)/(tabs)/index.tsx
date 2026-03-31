@@ -35,7 +35,6 @@ export default function Index() {
     typeof user?.avatar === "string" && user.avatar.startsWith("http");
 
   const params = useLocalSearchParams<{ query?: string; filter?: string }>();
-  console.log("params", params);
 
   const { data: latestProperties, loading: propertiesLoading } = useAppwrite<
     Property[],

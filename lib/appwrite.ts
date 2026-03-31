@@ -150,20 +150,6 @@ export async function getProperties({
   }
 }
 
-// export async function getPropertyById({ id }: { id: string }) {
-//   try {
-//     const result = await databases.getDocument(
-//       config.databaseId!,
-//       config.propertiesCollectionId!,
-//       id,
-//     );
-//     return result;
-//   } catch (error) {
-//     console.error(error);
-//     return null;
-//   }
-// }
-
 export async function getPropertyById({ id }: { id: string }) {
   try {
     const property = await databases.getDocument(
@@ -172,27 +158,24 @@ export async function getPropertyById({ id }: { id: string }) {
       id,
     );
 
-    // 👉 Fetch agent
     const agent = await databases.getDocument(
       config.databaseId!,
       config.agentsCollectionId!,
       property.agent,
     );
 
-    // 👉 Fetch reviews
     const reviewsRes = await databases.listDocuments(
       config.databaseId!,
       config.reviewsCollectionId!,
-      [Query.equal("$id", property.$id)],
+      [Query.equal("property", property.$id)],
     );
 
-    // 👉 Fetch gallery
     const galleryRes = await databases.listDocuments(
       config.databaseId!,
       config.galleriesCollectionId!,
       [Query.equal("$id", property.$id)],
     );
-
+    console.log("Fetched gallery:", galleryRes);
     return {
       ...property,
       agent,
@@ -200,7 +183,7 @@ export async function getPropertyById({ id }: { id: string }) {
       gallery: galleryRes.documents,
     };
   } catch (error) {
-    console.error(error);
+    console.error("error", error);
     return null;
   }
 }

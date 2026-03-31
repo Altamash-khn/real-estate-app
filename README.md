@@ -26,11 +26,11 @@ This project demonstrates how to build a full-stack mobile app with authenticati
 
 ## Tech Stack
 
-**Frontend**: React Native (Expo)
-**Styling**: NativeWind (Tailwind CSS)
-**Backend**: Appwrite
-**Authentication**: Google OAuth via Appwrite
-**Navigation**: Expo Router
+- **Frontend**: React Native (Expo)
+- **Styling**: NativeWind (Tailwind CSS)                                              
+- **Backend**: Appwrite
+- **Authentication**: Google OAuth via Appwrite
+- **Navigation**: Expo Router
 
 ## Authentication Flow
 
