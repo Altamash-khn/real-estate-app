@@ -1,4 +1,4 @@
-import { Property } from "@/app/(root)/(tabs)";
+import { Property } from "@/interface";
 import * as Linking from "expo-linking";
 import { openAuthSessionAsync } from "expo-web-browser";
 import {
@@ -150,7 +150,11 @@ export async function getProperties({
   }
 }
 
-export async function getPropertyById({ id }: { id: string }) {
+export async function getPropertyById({
+  id,
+}: {
+  id: string;
+}): Promise<Property | null> {
   try {
     const property = await databases.getDocument(
       config.databaseId!,
@@ -175,12 +179,34 @@ export async function getPropertyById({ id }: { id: string }) {
       config.galleriesCollectionId!,
       [Query.equal("$id", property.$id)],
     );
-    console.log("Fetched gallery:", galleryRes);
+
     return {
-      ...property,
-      agent,
-      reviews: reviewsRes.documents,
-      gallery: galleryRes.documents,
+      $id: property.$id,
+      name: property.name,
+      address: property.address,
+      price: property.price,
+      image: property.image,
+      rating: property.rating,
+      type: property.type,
+      description: property.description,
+      facilities: property.facilities,
+      bedrooms: property.bedrooms,
+      bathrooms: property.bathrooms,
+      area: property.area,
+
+      agent: {
+        email: agent.email,
+        name: agent.name,
+        avatar: agent.avatar,
+      },
+
+      reviews: reviewsRes.documents.map((r: any) => ({
+        user: r.user,
+        comment: r.comment,
+        rating: r.rating,
+      })),
+
+      gallery: galleryRes.documents.map((g: any) => g.image),
     };
   } catch (error) {
     console.error("error", error);

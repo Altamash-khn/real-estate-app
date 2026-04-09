@@ -3,6 +3,7 @@ import Filters from "@/components/Filters";
 import NoResults from "@/components/NoResults";
 import Search from "@/components/Search";
 import icons from "@/constants/icons";
+import { Property } from "@/interface";
 import { getLatestProperties, getProperties } from "@/lib/appwrite";
 import { useGlobalContext } from "@/lib/global-provider";
 import { useAppwrite } from "@/lib/useAppwrite";
@@ -18,16 +19,6 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import "../../../globals.css";
-
-export interface Property {
-  $id: string;
-  name: string;
-  address: string;
-  price: number;
-  image: string;
-  rating: number;
-  type: string;
-}
 
 export default function Index() {
   const { user } = useGlobalContext();

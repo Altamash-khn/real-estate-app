@@ -1,103 +1,3 @@
-// import { Card } from "@/components/Cards";
-// import Filters from "@/components/Filters";
-// import NoResults from "@/components/NoResults";
-// import Search from "@/components/Search";
-// import icons from "@/constants/icons";
-// import { getProperties } from "@/lib/appwrite";
-// import { useAppwrite } from "@/lib/useAppwrite";
-// import { router, useLocalSearchParams } from "expo-router";
-// import { useEffect } from "react";
-// import {
-//   ActivityIndicator,
-//   FlatList,
-//   Image,
-//   Text,
-//   TouchableOpacity,
-//   View,
-// } from "react-native";
-// import { SafeAreaView } from "react-native-safe-area-context";
-// import { Property } from ".";
-// import "../../../globals.css";
-
-// export default function Explore() {
-//   const params = useLocalSearchParams<{ query?: string; filter?: string }>();
-
-//   const {
-//     data: properties,
-//     loading,
-//     refetch,
-//   } = useAppwrite<Property[], any>({
-//     fn: getProperties,
-//     params: {
-//       filter: params.filter!,
-//       query: params.query!,
-//       limit: 20,
-//     },
-//     skip: true,
-//   });
-
-//   const handleCardPress = (propertyId: string) => {
-//     router.push(`/properties/${propertyId}`);
-//   };
-
-//   useEffect(() => {
-//     refetch({
-//       filter: params.filter!,
-//       query: params.query!,
-//       limit: 10,
-//     });
-//   }, [params.filter, params.query]);
-
-//   return (
-//     <SafeAreaView className="bg-white h-full">
-//       <FlatList
-//         data={properties}
-//         numColumns={2}
-//         contentContainerClassName="pb-32"
-//         columnWrapperClassName="flex gap-5 px-5 border-b border-gray-200"
-//         showsVerticalScrollIndicator={false}
-//         ListEmptyComponent={
-//           loading ? (
-//             <ActivityIndicator className="text-primary-300 mt-5" size="large" />
-//           ) : (
-//             <NoResults />
-//           )
-//         }
-//         ListHeaderComponent={
-//           <View className="px-5">
-//             <View className="flex flex-row items-center justify-between gap-2 mt-5">
-//               <TouchableOpacity
-//                 className="flex flex-row bg-primary-200 rounded-full items-center justify-center"
-//                 onPress={() => router.back()}
-//               >
-//                 <Image source={icons.backArrow} className="size-5" />
-//               </TouchableOpacity>
-//               <Text className="text-base font-rubik-medium mr-2 text-black-300 text-center">
-//                 Search for your Ideal Home
-//               </Text>
-
-//               <Image source={icons.bell} className="w-6 h-4" />
-//             </View>
-
-//             <Search />
-
-//             <View className="mt-5">
-//               <Filters />
-
-//               <Text className="text-xl font-rubik-bold  text-black-300 mt-5 ">
-//                 Found {properties?.length || 0} properties
-//               </Text>
-//             </View>
-//           </View>
-//         }
-//         renderItem={({ item }) => (
-//           <Card onPress={() => handleCardPress(item.$id)} item={item} />
-//         )}
-//       />
-//     </SafeAreaView>
-//   );
-// }
-
 import { Card } from "@/components/Cards";
 import Filters from "@/components/Filters";
 import NoResults from "@/components/NoResults";
@@ -187,7 +87,7 @@ export default function Explore() {
               end={{ x: 1, y: 1 }}
               className="px-5 pt-4 pb-4"
             >
-              <View className="flex flex-row items-center justify-between mb-5">
+              <View className="flex flex-row items-center justify-between mb-5 px-5 py-3">
                 <TouchableOpacity
                   onPress={() => router.back()}
                   className="bg-white/20 rounded-full p-2"
@@ -216,7 +116,9 @@ export default function Explore() {
                 Find your ideal home
               </Text>
 
-              <Search />
+              <View className="px-5">
+                <Search />
+              </View>
             </LinearGradient>
 
             <View className="px-5 mt-4 flex flex-row items-center justify-between">

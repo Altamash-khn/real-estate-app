@@ -29,9 +29,7 @@ const Property = () => {
       id: id!,
     },
   });
-
-  console.log(property);
-
+  console.log("property", property);
   return (
     <View>
       <ScrollView
@@ -159,7 +157,7 @@ const Property = () => {
               Facilities
             </Text>
 
-            {property?.facilities?.length > 0 && (
+            {property && property?.facilities?.length > 0 && (
               <View className="flex flex-row flex-wrap items-start justify-start mt-2 gap-5">
                 {property?.facilities.map((item: string, index: number) => {
                   const facility = facilities.find(
@@ -192,20 +190,22 @@ const Property = () => {
             )}
           </View>
 
-          {property?.gallery?.length > 0 && (
+          {property && property?.gallery?.length > 0 && (
             <View className="mt-7">
               <Text className="text-black-300 text-xl font-rubik-bold">
                 Gallery
               </Text>
               <FlatList
                 contentContainerStyle={{ paddingRight: 20 }}
-                data={property?.gallery}
-                keyExtractor={(item) => item.$id}
+                data={property?.gallery as { $id: string; image: string }[]}
+                keyExtractor={(item: { $id: string; image: string }) =>
+                  item.$id
+                }
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 renderItem={({ item }) => (
                   <Image
-                    source={{ uri: item.image }}
+                    source={{ uri: item?.image }}
                     className="size-40 rounded-xl"
                   />
                 )}
@@ -231,7 +231,7 @@ const Property = () => {
             />
           </View>
 
-          {property?.reviews?.length > 0 && (
+          {property && property?.reviews?.length > 0 && (
             <View className="mt-7">
               <View className="flex flex-row items-center justify-between">
                 <View className="flex flex-row items-center">
@@ -249,7 +249,16 @@ const Property = () => {
               </View>
 
               <View className="mt-5">
-                <Comment item={property?.reviews[0]} />
+                <Comment
+                  item={
+                    property?.reviews[0] as {
+                      name: string;
+                      avatar: string;
+                      review: string;
+                      $createdAt: string;
+                    }
+                  }
+                />
               </View>
             </View>
           )}
