@@ -31,6 +31,7 @@ This project demonstrates how to build a full-stack mobile app with authenticati
 - **Backend**: Appwrite
 - **Authentication**: Google OAuth via Appwrite
 - **Navigation**: Expo Router
+- **State management**: Context API
 
 ## Authentication Flow
 
